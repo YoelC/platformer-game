@@ -1,5 +1,6 @@
 import pygame
 from config import WINDOW_WIDTH, WINDOW_HEIGHT
+from math import sqrt
 
 
 class Camera:
@@ -39,8 +40,11 @@ class Camera:
 
     def set_black_bars(self, black_bars):
         if black_bars:
-            self.bottom_black_bar.set_on_screen(True)
-            self.top_black_bar.set_on_screen(True)
+            self.bottom_black_bar.set_pos(WINDOW_HEIGHT - 96)
+            self.top_black_bar.set_pos(96 - BlackBar.height)
+        elif not black_bars:
+            self.bottom_black_bar.set_pos(WINDOW_HEIGHT)
+            self.top_black_bar.set_pos(-BlackBar.height)
 
     def cap_vel(self, vel):
         x_vel, y_vel = vel
@@ -101,11 +105,12 @@ class Camera:
 
 
 class BlackBar:
+    height = WINDOW_HEIGHT / 8
+    width = WINDOW_WIDTH
+
     def __init__(self, is_top):
         self.x = 0
         self.y = WINDOW_HEIGHT
-        self.height = WINDOW_WIDTH/8
-        self.width = WINDOW_WIDTH
         self.x_vel, self.y_vel = 0, 0
 
         self.is_top = is_top
@@ -133,12 +138,11 @@ class BlackBar:
         self.y_vel = round(self.y_vel, 1)
         self.x_vel = round(self.x_vel, 1)
 
-    def set_on_screen(self, on_screen):
-        vel = 4.5
-        if on_screen:
-            self.y_vel = -vel if self.is_top else vel
-        elif not on_screen:
-            self.y_vel = vel if self.is_top else -vel
+    def set_pos(self, wish_pos):
+        dy = self.y - wish_pos
+        vf = 0
+        t = 15
+        self.y_vel = round((-(vf * t) + (2 * dy))/t, 1)
 
     def draw(self, surface):
         surface.blit(self.surface, (self.x, self.y))

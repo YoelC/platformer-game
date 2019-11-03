@@ -29,7 +29,6 @@ for tile in tiles:
     camera.add_object(tile)
 for button in buttons:
     camera.add_object(button)
-camera.set_black_bars(True)
 
 space = False
 holding_space = False
@@ -99,6 +98,10 @@ while True:
 
     # Camera movement
     camera.move(player)
+    if player.moving_down and player.on_surface:
+        camera.set_black_bars(True)
+    else:
+        camera.set_black_bars(False)
 
     # Checking for button presses
     player.attached_text = ''
