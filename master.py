@@ -2,6 +2,7 @@ import pygame.freetype
 import sys
 from classes.player import Player
 from classes.tile import Tile
+from classes.water import WaterTile
 from classes.button import Button
 from classes.camera import Camera
 from config import map, WINDOW_WIDTH, WINDOW_HEIGHT
@@ -16,18 +17,23 @@ clock = pygame.time.Clock()
 player = Player((WINDOW_WIDTH/2, WINDOW_HEIGHT/2))
 tiles = []
 buttons = []
+water_tiles = []
 for y, row in enumerate(map):
     for x, tile in enumerate(row):
         if tile == 1 or tile == 2 or int(tile) == 4:
             tiles.append(Tile((x, y), tile))
         if int(tile) == 3:
             buttons.append(Button((x, y), tile))
+        if tile == 8:
+            water_tiles.append(WaterTile((x, y), tile))
 
 camera = Camera(player)
 for tile in tiles:
     camera.add_object(tile)
 for button in buttons:
     camera.add_object(button)
+for water_tile in water_tiles:
+    camera.add_object(water_tile)
 
 space = False
 holding_space = False
@@ -68,9 +74,18 @@ while True:
         player.right()
     if keys[pygame.K_s]:
         player.down()
+    if keys[pygame.K_w]:
+        player.up()
 
     if space:
         player.jump()
+
+    # Water tiles
+    in_water = []
+    for tile in water_tiles:
+        in_water.append(player.get_rect().colliderect(tile.get_rect()))
+
+    player.underwater = any(in_water)
 
     # Calculating movement with input
     player.calculate_move()
@@ -132,6 +147,9 @@ while True:
         button.draw(win)
 
     player.draw_text(win)
+
+    for water_tile in water_tiles:
+        water_tile.draw(win)
 
     camera.draw_black_bar(win)
     # Deadzone drawing
