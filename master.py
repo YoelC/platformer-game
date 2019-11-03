@@ -137,7 +137,7 @@ while True:
     for button in buttons:
         collide_button = button.collide_player(player)
         if collide_button and not button.pressed:
-            player.attached_text = 'Use'
+            player.attached_text = 'Use (E)'
             if e_key:
                 button.was_pressed()
 
@@ -157,7 +157,7 @@ while True:
         readings.append(read)
         if read:
             player.use = True
-            player.attached_text = 'Read'
+            player.attached_text = 'Read (E)'
             if e_key:
                 camera.note.set_text(note_tile.text)
                 player.reading = True
