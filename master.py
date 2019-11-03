@@ -41,6 +41,9 @@ for water_tile in water_tiles:
 for note_tile in note_tiles:
     camera.add_object(note_tile)
 
+camera.set_pos((0, -64*17))
+player.center()
+
 space = False
 holding_space = False
 
@@ -119,6 +122,11 @@ while True:
     # Camera movement
     camera.move(player)
     camera.note.move()
+
+    if camera.y < -64*25:
+        camera.set_pos((0, -64 * 17))
+        player.center()
+
     if player.moving_down and player.on_surface:
         camera.set_black_bars(True)
     else:
@@ -151,7 +159,7 @@ while True:
             player.use = True
             player.attached_text = 'Read'
             if e_key:
-                camera.note.set_text(note_tile.tile)
+                camera.note.set_text(note_tile.text)
                 player.reading = True
                 camera.note.set_pos(50)
 

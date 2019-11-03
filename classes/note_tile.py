@@ -11,9 +11,11 @@ class NoteTile(Tile):
         self.surface.fill((255, 251, 191))
         self.reading = False
 
-        self.text = 'There is no text here.'
-
+        self.text = f'Debug text ({tile})'
+        if tile == 5.01:
+            self.text = "This is the test room. There are a few features that are still being tested here. Please notice that the textures (and most stuff as well!) will not look like here."
         if tile == 5.02:
+            self.text = "Any feedback or bug reporting would be appreciated on my github: github.com/YoelC/ platformer-game"
             self.looking_right = True
 
     def get_rect(self):

@@ -177,11 +177,8 @@ class Note:
 
         self.adjust_text()
 
-    def set_text(self, tile):
-        if tile == 5.01:
-            self.text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque euismod tempus sodales. Vestibulum vitae lectus nec massa dapibus facilisis ultricies sed ante. Donec dapibus est sapien, nec fermentum quam lacinia egestas. Aenean pharetra sit amet tortor aliquet volutpat. Nam sodales maximus turpis vitae malesuada. Curabitur nibh augue, aliquet in sapien sed, ultricies rhoncus ipsum.'
-        if tile == 5.02:
-            self.text = 'It works! :D'
+    def set_text(self, text):
+        self.text = text
 
     def adjust_text(self):
         text_split = self.text.split(' ')
