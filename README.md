@@ -15,6 +15,7 @@ The game has a few features, such as:
     - Jumping
     - Activating buttons
     - Swimming
+- Readable notes
 - Easy map creation (for developer)
 - A story (soon)
 - Cinematics (soon)
