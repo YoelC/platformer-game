@@ -14,6 +14,8 @@ class Button(Tile):
             self.looking_right = True
         if tile == 3.02:
             self.looking_right = False
+        if tile == 3.03:
+            self.looking_right = False
 
     def collide_player(self, player):
         if self.get_rect().colliderect(player.get_rect()):
@@ -26,6 +28,13 @@ class Button(Tile):
     def was_pressed(self):
         self.width /= 2
         self.pressed = True
+
+        self.surface = pygame.Surface((self.width, self.height))
+        self.surface.fill((0, 255, 0))
+
+    def was_unpressed(self):
+        self.width *= 2
+        self.pressed = False
 
         self.surface = pygame.Surface((self.width, self.height))
         self.surface.fill((0, 255, 0))

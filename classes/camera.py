@@ -1,9 +1,10 @@
 import pygame
+from config import WINDOW_WIDTH, WINDOW_HEIGHT
 
 
 class Camera:
-    def __init__(self, size):
-        self.width, self.height = size
+    def __init__(self, player):
+        self.width, self.height = WINDOW_WIDTH, WINDOW_HEIGHT
         self.x, self.y = 0, 0
         self.x_vel, self.y_vel = 0, 0
         self.objects = []
@@ -11,17 +12,35 @@ class Camera:
         self.x_zone = self.width / 2 - 100
         self.y_zone = self.height / 2 - 75
 
+        self.player = player
+        self.objects.append(self.player)
+
+        self.top_black_bar = BlackBar(is_top=True)
+        self.bottom_black_bar = BlackBar(is_top=False)
+
     def set_pos(self, pos):
+        x = self.x - pos[0]
+        y = self.y - pos[1]
         for item in self.objects:
-            item.x += pos[0]
-            item.y -= pos[1]
+            item.x += x
+            item.y -= y
         self.x = pos[0]
         self.y = pos[1]
+
+        self.player.center()
 
     def move_delta(self, delta):
         for item in self.objects:
             item.x -= delta[0]
             item.y += delta[1]
+
+        self.x += delta[0]
+        self.y += delta[1]
+
+    def set_black_bars(self, black_bars):
+        if black_bars:
+            self.bottom_black_bar.set_on_screen(True)
+            self.top_black_bar.set_on_screen(True)
 
     def cap_vel(self, vel):
         x_vel, y_vel = vel
@@ -67,8 +86,60 @@ class Camera:
         self.cap_vel((15, None))
         self.move_delta((self.x_vel, self.y_vel))
 
+        self.top_black_bar.move()
+        self.bottom_black_bar.move()
+
     def add_object(self, item):
         self.objects.append(item)
 
     def draw(self, surface):
         pygame.draw.rect(surface, (255, 0, 0), (self.x_zone, self.y_zone - 50, 200, 150), 2)
+
+    def draw_black_bar(self, surface):
+        self.top_black_bar.draw(surface)
+        self.bottom_black_bar.draw(surface)
+
+
+class BlackBar:
+    def __init__(self, is_top):
+        self.x = 0
+        self.y = WINDOW_HEIGHT
+        self.height = WINDOW_WIDTH/8
+        self.width = WINDOW_WIDTH
+        self.x_vel, self.y_vel = 0, 0
+
+        self.is_top = is_top
+
+        self.on_screen = False
+        if is_top:
+            self.y = -self.height
+
+        self.surface = pygame.Surface((self.width, self.height))
+        self.surface.fill((0, 0, 0))
+
+    def move(self):
+        self.y_vel = round(self.y_vel, 1)
+        self.x_vel = round(self.x_vel, 1)
+
+        self.x += self.x_vel
+        self.y -= self.y_vel
+
+        self.x_vel -= 0
+        if self.y_vel > 0:
+            self.y_vel -= 0.1
+        if self.y_vel < 0:
+            self.y_vel += 0.1
+
+        self.y_vel = round(self.y_vel, 1)
+        self.x_vel = round(self.x_vel, 1)
+
+    def set_on_screen(self, on_screen):
+        vel = 4.5
+        if on_screen:
+            self.y_vel = -vel if self.is_top else vel
+        elif not on_screen:
+            self.y_vel = vel if self.is_top else -vel
+
+    def draw(self, surface):
+        surface.blit(self.surface, (self.x, self.y))
+

@@ -4,11 +4,9 @@ from classes.player import Player
 from classes.tile import Tile
 from classes.button import Button
 from classes.camera import Camera
-from config import map
+from config import map, WINDOW_WIDTH, WINDOW_HEIGHT
+import time
 
-WINDOW_WIDTH, WINDOW_HEIGHT = 1280, 768
-WINDOW_WIDTH_TILES = int(WINDOW_WIDTH / 64)
-WINDOW_HEIGHT_TILES = int(WINDOW_HEIGHT / 64)
 FPS = 30
 
 pygame.init()
@@ -26,12 +24,12 @@ for y, row in enumerate(map):
         if int(tile) == 3:
             buttons.append(Button((x, y), tile))
 
-camera = Camera((WINDOW_WIDTH, WINDOW_HEIGHT))
-camera.add_object(player)
+camera = Camera(player)
 for tile in tiles:
     camera.add_object(tile)
 for button in buttons:
     camera.add_object(button)
+camera.set_black_bars(True)
 
 space = False
 holding_space = False
@@ -98,6 +96,11 @@ while True:
     player.move()
 
     button_collisions = []
+
+    # Camera movement
+    camera.move(player)
+
+    # Checking for button presses
     player.attached_text = ''
     for button in buttons:
         collide_button = button.collide_player(player)
@@ -107,6 +110,8 @@ while True:
                 button.was_pressed()
 
     player.use = any(button_collisions)
+
+    # Syncing tiles with buttons
     for tile in tiles:
         tile.move()
         for button in buttons:
@@ -114,11 +119,12 @@ while True:
 
                 tile.activate()
 
-    # Camera movement
-    camera.move(player)
+            if button.pressed and button.tile == 3.03:
+                button.was_unpressed()
+                camera.set_pos((0, 4))
 
     # Drawing
-    win.fill((0, 0, 0))
+    win.fill((64, 64, 64))
     player.draw(win)
     player.reset_variables()
 
@@ -129,6 +135,8 @@ while True:
         button.draw(win)
 
     player.draw_text(win)
+
+    camera.draw_black_bar(win)
     # Deadzone drawing
     # camera.draw(win)
 

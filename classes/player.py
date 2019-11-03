@@ -1,5 +1,5 @@
 import pygame
-from config import FONT
+from config import FONT, WINDOW_WIDTH, WINDOW_HEIGHT
 
 
 class Player:
@@ -144,6 +144,13 @@ class Player:
 
     def down(self):
         self.moving_down = True
+
+    def center(self):
+        self.x = WINDOW_WIDTH/2
+        self.y = WINDOW_HEIGHT/2
+
+        self.x_vel = 0
+        self.y_vel = 0
 
     def draw_text(self, surface):
         # Text drawing
