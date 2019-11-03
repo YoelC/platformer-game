@@ -157,6 +157,10 @@ while True:
 
     if not any(readings):
         camera.note.set_pos(WINDOW_HEIGHT + 100)
+        player.reading = False
+
+    if player.reading:
+        camera.set_black_bars(True)
 
     # Drawing
     win.fill((64, 64, 64))
@@ -177,9 +181,8 @@ while True:
     for note_tile in note_tiles:
         note_tile.draw(win)
 
-    camera.note.draw(win)
-
     camera.draw_black_bar(win)
+    camera.note.draw(win)
     # Deadzone drawing
     # camera.draw(win)
 
