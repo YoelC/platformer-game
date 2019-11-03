@@ -1,7 +1,10 @@
-import pygame
+import pygame.freetype
 import sys
 from classes.player import Player
 from classes.tile import Tile
+from classes.button import Button
+from classes.camera import Camera
+from config import map
 
 WINDOW_WIDTH, WINDOW_HEIGHT = 1280, 768
 WINDOW_WIDTH_TILES = int(WINDOW_WIDTH / 64)
@@ -9,41 +12,39 @@ WINDOW_HEIGHT_TILES = int(WINDOW_HEIGHT / 64)
 FPS = 30
 
 pygame.init()
+pygame.freetype.init()
 win = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 clock = pygame.time.Clock()
 
 player = Player((WINDOW_WIDTH/2, WINDOW_HEIGHT/2))
-
-# This is the map. Each 0 is represented as an empty space, and 1 as a tile. 2 is the player spawn point.
-map = [
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 2, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-       ]
-
 tiles = []
+buttons = []
 for y, row in enumerate(map):
     for x, tile in enumerate(row):
-        if tile == 1:
-            tiles.append(Tile((x, y)))
+        if tile == 1 or tile == 2 or int(tile) == 4:
+            tiles.append(Tile((x, y), tile))
+        if int(tile) == 3:
+            buttons.append(Button((x, y), tile))
+
+camera = Camera((WINDOW_WIDTH, WINDOW_HEIGHT))
+camera.add_object(player)
+for tile in tiles:
+    camera.add_object(tile)
+for button in buttons:
+    camera.add_object(button)
 
 space = False
 holding_space = False
+
+e_key = False
+holding_e_key = False
 while True:
     clock.tick(FPS)
 
     # Handling input
     keys = pygame.key.get_pressed()
 
+    # Space input
     space = False
     if keys[pygame.K_SPACE] and not holding_space:
         space = True
@@ -51,6 +52,15 @@ while True:
 
     if not keys[pygame.K_SPACE]:
         holding_space = False
+
+    # 'E' input
+    e_key = False
+    if keys[pygame.K_e] and not holding_e_key:
+        e_key = True
+        holding_e_key = True
+
+    if not keys[pygame.K_e]:
+        holding_e_key = False
 
     pygame.display.set_caption(f'fps: {clock.get_fps()}')
     if pygame.QUIT in [event.type for event in pygame.event.get()]:
@@ -73,44 +83,53 @@ while True:
     crashes_floor = []
     touches_lwall = []
     touches_rwall = []
-    relative_y_vels = []
     for tile in tiles:
-        result = player.collide_tile(tile)
+        result = tile.collide_player(player)
         crashes_floor.append(result[0])
         touches_rwall.append(result[1])
         touches_lwall.append(result[2])
-        relative_y_vels.append(result[3])
 
     player.on_surface = any(crashes_floor)
     player.on_rwall = any(touches_rwall)
     player.on_lwall = any(touches_lwall)
 
     # Relative y velocity for wall jumps
-    relative_y_vel = [relative_y_vel for relative_y_vel in relative_y_vels if isinstance(relative_y_vel, float)]
-    if not relative_y_vel:
-        relative_y_vel = 0
-    else:
-        relative_y_vel = relative_y_vel[0]
-
     player.calculate_walljump(0)
     player.move()
+
+    button_collisions = []
+    player.attached_text = ''
+    for button in buttons:
+        collide_button = button.collide_player(player)
+        if collide_button and not button.pressed:
+            player.attached_text = 'Use'
+            if e_key:
+                button.was_pressed()
+
+    player.use = any(button_collisions)
     for tile in tiles:
         tile.move()
+        for button in buttons:
+            if button.pressed and round(button.tile - 3, 2) == round(tile.tile - 4, 2) and tile.activated:
 
-    # Adjusting scroll
-    x_scroll = 0
-    y_scroll = 0
-    player.x -= x_scroll
-    player.y -= y_scroll
-    for tile in tiles:
-        tile.x -= x_scroll
-        tile.y -= y_scroll
+                tile.activate()
 
+    # Camera movement
+    camera.move(player)
+
+    # Drawing
     win.fill((0, 0, 0))
     player.draw(win)
     player.reset_variables()
 
     for tile in tiles:
         tile.draw(win)
+
+    for button in buttons:
+        button.draw(win)
+
+    player.draw_text(win)
+    # Deadzone drawing
+    # camera.draw(win)
 
     pygame.display.flip()
