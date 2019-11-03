@@ -3,6 +3,7 @@ import sys
 from classes.player import Player
 from classes.tile import Tile
 from classes.water import WaterTile
+from classes.note_tile import NoteTile
 from classes.button import Button
 from classes.camera import Camera
 from config import map, WINDOW_WIDTH, WINDOW_HEIGHT
@@ -18,12 +19,15 @@ player = Player((WINDOW_WIDTH/2, WINDOW_HEIGHT/2))
 tiles = []
 buttons = []
 water_tiles = []
+note_tiles = []
 for y, row in enumerate(map):
     for x, tile in enumerate(row):
         if tile == 1 or tile == 2 or int(tile) == 4:
             tiles.append(Tile((x, y), tile))
         if int(tile) == 3:
             buttons.append(Button((x, y), tile))
+        if int(tile) == 5:
+            note_tiles.append(NoteTile((x, y), tile))
         if tile == 8:
             water_tiles.append(WaterTile((x, y), tile))
 
@@ -34,6 +38,8 @@ for button in buttons:
     camera.add_object(button)
 for water_tile in water_tiles:
     camera.add_object(water_tile)
+for note_tile in note_tiles:
+    camera.add_object(note_tile)
 
 space = False
 holding_space = False
@@ -112,6 +118,7 @@ while True:
 
     # Camera movement
     camera.move(player)
+    camera.note.move()
     if player.moving_down and player.on_surface:
         camera.set_black_bars(True)
     else:
@@ -135,6 +142,22 @@ while True:
             if button.pressed and round(button.tile - 3, 2) == round(tile.tile - 4, 2) and tile.activated:
                 tile.activate()
 
+    # Note tile interaction
+    readings = []
+    for note_tile in note_tiles:
+        read = note_tile.get_rect().colliderect(player.get_rect())
+        readings.append(read)
+        if read:
+            player.use = True
+            player.attached_text = 'Read'
+            if e_key:
+                camera.note.set_text(note_tile.tile)
+                player.reading = True
+                camera.note.set_pos(50)
+
+    if not any(readings):
+        camera.note.set_pos(WINDOW_HEIGHT + 100)
+
     # Drawing
     win.fill((64, 64, 64))
     player.draw(win)
@@ -150,6 +173,11 @@ while True:
 
     for water_tile in water_tiles:
         water_tile.draw(win)
+
+    for note_tile in note_tiles:
+        note_tile.draw(win)
+
+    camera.note.draw(win)
 
     camera.draw_black_bar(win)
     # Deadzone drawing

@@ -86,6 +86,7 @@ class Player:
         self.attached_text = ''
 
         self.use = False
+        self.reading = False
 
     def cap_speed(self):
         if not self.underwater:
@@ -325,6 +326,9 @@ class Player:
             img = self.swim_imgs[int(self.img_count)]
             if self.y_vel > 5:
                 img = rotate_center(img, 270, (0, 0))[0]
+            if abs(self.x_vel) < 0.55:
+                if not self.looking_right:
+                    img = pygame.transform.flip(img, True, False)
             self.img_count += 0.2
 
         # Flipping based on speed

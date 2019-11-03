@@ -1,5 +1,5 @@
 import pygame
-from config import WINDOW_WIDTH, WINDOW_HEIGHT
+from config import WINDOW_WIDTH, WINDOW_HEIGHT, FONT
 from math import sqrt
 
 
@@ -18,6 +18,8 @@ class Camera:
 
         self.top_black_bar = BlackBar(is_top=True)
         self.bottom_black_bar = BlackBar(is_top=False)
+
+        self.note = Note()
 
     def set_pos(self, pos):
         x = self.x - pos[0]
@@ -134,8 +136,6 @@ class BlackBar:
         self.y_vel = round(self.y_vel, 1)
         self.x_vel = round(self.x_vel, 1)
 
-        print(self.y_vel)
-
     def set_pos(self, wish_pos):
         dy = self.y - wish_pos
         vf = 0
@@ -145,3 +145,60 @@ class BlackBar:
     def draw(self, surface):
         surface.blit(self.surface, (self.x, self.y))
 
+
+class Note:
+    width, height = 500, 700
+
+    def __init__(self):
+        self.x = WINDOW_WIDTH/2 - self.width/2
+        self.y = WINDOW_HEIGHT + 100
+        self.x_vel, self.y_vel = 0, 0
+
+        self.text = ''
+        self.surfaces = []
+        self.surfaces_pos = []
+
+        self.surface = pygame.Surface((self.width, self.height))
+        self.surface.fill((255, 251, 191))
+
+        self.wish_pos = WINDOW_HEIGHT
+
+    def set_pos(self, wish_pos):
+        self.wish_pos = wish_pos
+
+    def move(self):
+        dy = self.y - self.wish_pos
+        vf = 0
+        t = 15
+        self.y_vel = round((-(vf * t) + (2 * dy))/t, 1)
+
+        self.x += self.x_vel
+        self.y -= self.y_vel
+
+        self.adjust_text()
+
+    def set_text(self, tile):
+        if tile == 5.01:
+            self.text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque euismod tempus sodales. Vestibulum vitae lectus nec massa dapibus facilisis ultricies sed ante. Donec dapibus est sapien, nec fermentum quam lacinia egestas. Aenean pharetra sit amet tortor aliquet volutpat. Nam sodales maximus turpis vitae malesuada. Curabitur nibh augue, aliquet in sapien sed, ultricies rhoncus ipsum.'
+        if tile == 5.02:
+            self.text = 'It works! :D'
+
+    def adjust_text(self):
+        text_split = self.text.split(' ')
+        offset_x, offset_y = 60, 15
+        self.surfaces = []
+        self.surfaces_pos = []
+        for x in text_split:
+            surface, pos = FONT.render(x, size=25, fgcolor=(25, 25, 25))
+            if offset_x + pos.width > self.width - 30:
+                offset_x = 15
+                offset_y += 40
+            self.surfaces.append(surface)
+            self.surfaces_pos.append((self.x + offset_x, self.y + offset_y))
+            offset_x += 15
+            offset_x += pos.width
+
+    def draw(self, surface):
+        surface.blit(self.surface, (self.x, self.y))
+        for font_surface, font_pos in zip(self.surfaces, self.surfaces_pos):
+            surface.blit(font_surface, font_pos)

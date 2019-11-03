@@ -42,6 +42,7 @@ class Button(Tile):
     def draw(self, surface):
         x_offset = 0
         y_offset = 15
+
         if not self.looking_right:
             x_offset += 64 - self.width
 
