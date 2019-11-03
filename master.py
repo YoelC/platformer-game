@@ -5,7 +5,6 @@ from classes.tile import Tile
 from classes.button import Button
 from classes.camera import Camera
 from config import map, WINDOW_WIDTH, WINDOW_HEIGHT
-import time
 
 FPS = 30
 
@@ -119,12 +118,7 @@ while True:
         tile.move()
         for button in buttons:
             if button.pressed and round(button.tile - 3, 2) == round(tile.tile - 4, 2) and tile.activated:
-
                 tile.activate()
-
-            if button.pressed and button.tile == 3.03:
-                button.was_unpressed()
-                camera.set_pos((0, 4))
 
     # Drawing
     win.fill((64, 64, 64))

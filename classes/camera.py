@@ -130,13 +130,11 @@ class BlackBar:
         self.y -= self.y_vel
 
         self.x_vel -= 0
-        if self.y_vel > 0:
-            self.y_vel -= 0.1
-        if self.y_vel < 0:
-            self.y_vel += 0.1
 
         self.y_vel = round(self.y_vel, 1)
         self.x_vel = round(self.x_vel, 1)
+
+        print(self.y_vel)
 
     def set_pos(self, wish_pos):
         dy = self.y - wish_pos
