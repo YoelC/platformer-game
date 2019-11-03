@@ -123,8 +123,8 @@ while True:
     camera.move(player)
     camera.note.move()
 
-    if camera.y < -64*25:
-        camera.set_pos((0, -64 * 17))
+    if camera.y < -64*29:
+        camera.set_pos((64 * 25, -64 * 5 + 16))
         player.center()
 
     if player.moving_down and player.on_surface:

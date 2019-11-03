@@ -150,7 +150,7 @@ class Note:
     width, height = 500, 700
 
     def __init__(self):
-        self.x = WINDOW_WIDTH/2 - self.width/2
+        self.x = (WINDOW_WIDTH/2) - self.width/2
         self.y = WINDOW_HEIGHT + 100
         self.x_vel, self.y_vel = 0, 0
 
@@ -182,16 +182,16 @@ class Note:
 
     def adjust_text(self):
         text_split = self.text.split(' ')
-        offset_x, offset_y = 60, 15
+        offset_x, offset_y = 75, 45
         self.surfaces = []
         self.surfaces_pos = []
         for x in text_split:
             surface, pos = FONT.render(x, size=25, fgcolor=(25, 25, 25))
             if offset_x + pos.width > self.width - 30:
-                offset_x = 15
+                offset_x = 25
                 offset_y += 40
             self.surfaces.append(surface)
-            self.surfaces_pos.append((self.x + offset_x, self.y + offset_y))
+            self.surfaces_pos.append((self.x + offset_x, self.y + offset_y - pos.height))
             offset_x += 15
             offset_x += pos.width
 
