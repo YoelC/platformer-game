@@ -14,6 +14,7 @@ The game has a few features, such as:
     - Crouching
     - Jumping
     - Activating buttons
+    - Swimming
 - Easy map creation (for developer)
 - A story (soon)
 - Cinematics (soon)
