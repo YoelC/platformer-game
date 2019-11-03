@@ -5,3 +5,15 @@ The animations are created by [rvros](https://rvros.itch.io/animated-pixel-hero)
 
 ## Creation
 Developed in Python with PyGame.
+
+## Features
+The game has a few features, such as:
+- Movement mechanics
+    - Wall jumping
+    - Running
+    - Crouching
+    - Jumping
+    - Activating buttons
+- Easy map creation (for developer)
+- A story (soon)
+- Cinematics (soon)
