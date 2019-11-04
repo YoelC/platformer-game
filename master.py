@@ -7,7 +7,9 @@ from classes.note_tile import NoteTile
 from classes.button import Button
 from classes.door import Door
 from classes.camera import Camera
+from classes.particle import Particle
 from config import map, WINDOW_WIDTH, WINDOW_HEIGHT
+from random import randint, uniform
 
 FPS = 30
 
@@ -53,8 +55,12 @@ black_fadeout = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
 black_fadeout.fill((0, 0, 0, 0))
 alpha = 0
 
+particles = []
+
 e_key = False
 holding_e_key = False
+
+tick = 0
 while True:
     clock.tick(FPS)
 
@@ -102,8 +108,8 @@ while True:
 
     player.underwater = any(in_water)
 
-    was_here = False
     # Door tiles
+    was_here = False
     player.use = False
     door_collisions = []
     for door_tile in door_tiles:
@@ -153,6 +159,35 @@ while True:
     else:
         camera.set_black_bars(False)
 
+    # Particle creation
+    if abs(player.x_vel) > 10 and player.on_surface and tick % 3 == 0:
+        particles.append(Particle(
+            pos=(player.x + player.width/2, player.y + player.height, randint(4, 8)),
+            vel=(-player.x_vel/8, randint(-10, -5)),
+            color=(128, 128, 128),
+            lifetime=15,
+            gravity=True))
+        camera.add_object(particles[-1])
+
+    if (player.on_lwall or player.on_rwall) and not player.moving_down and tick % 8 == 0:
+        particles.append(Particle(
+            pos=(player.x + player.width / 2 + randint(-5, 5), player.y + player.height/2, randint(4, 8)),
+            vel=(0, player.y_vel),
+            color=(128, 128, 128),
+            lifetime=15,
+            gravity=True))
+        camera.add_object(particles[-1])
+
+    if (player.on_lwall or player.on_rwall) and player.jumping:
+        for i in range(3):
+            particles.append(Particle(
+                pos=(player.x + player.width / 2 + randint(-5, 5), player.y + player.height/2, randint(4, 8)),
+                vel=(player.x_vel * uniform(0.5, 0.9), randint(-10, -5)),
+                color=(128, 128, 128),
+                lifetime=15,
+                gravity=True))
+            camera.add_object(particles[-1])
+
     # Checking for button presses
     for button in buttons:
         collide_button = button.collide_player(player)
@@ -189,11 +224,20 @@ while True:
     if player.reading:
         camera.set_black_bars(True)
 
+    # Moving particles
+    for i, particle in enumerate(particles):
+        particles[i].move()
+        if particle.dead:
+            particles.pop(i)
+
     # Drawing
     win.fill((64, 64, 64))
 
     for door_tile in door_tiles:
         door_tile.draw(win)
+
+    for particle in particles:
+        particle.draw(win)
 
     player.draw(win)
     player.reset_variables()
@@ -215,11 +259,14 @@ while True:
 
     camera.draw_black_bar(win)
     camera.note.draw(win)
+
     # Deadzone drawing
     # camera.draw(win)
 
-    alpha /= 2
+    alpha /= 1.1
     black_fadeout.fill((0, 0, 0, alpha))
     win.blit(black_fadeout, (0, 0))
+
+    tick += 1
 
     pygame.display.flip()
