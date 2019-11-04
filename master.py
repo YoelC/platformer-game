@@ -5,6 +5,7 @@ from classes.tile import Tile
 from classes.water import WaterTile
 from classes.note_tile import NoteTile
 from classes.button import Button
+from classes.door import Door
 from classes.camera import Camera
 from config import map, WINDOW_WIDTH, WINDOW_HEIGHT
 
@@ -20,6 +21,7 @@ tiles = []
 buttons = []
 water_tiles = []
 note_tiles = []
+door_tiles = []
 for y, row in enumerate(map):
     for x, tile in enumerate(row):
         if tile == 1 or tile == 2 or int(tile) == 4:
@@ -28,6 +30,8 @@ for y, row in enumerate(map):
             buttons.append(Button((x, y), tile))
         if int(tile) == 5:
             note_tiles.append(NoteTile((x, y), tile))
+        if int(tile) == 6 or int(tile) == 7:
+            door_tiles.append(Door((x, y), tile))
         if tile == 8:
             water_tiles.append(WaterTile((x, y), tile))
 
@@ -40,9 +44,8 @@ for water_tile in water_tiles:
     camera.add_object(water_tile)
 for note_tile in note_tiles:
     camera.add_object(note_tile)
-
-camera.set_pos((0, -64*17))
-player.center()
+for door_tile in door_tiles:
+    camera.add_object(door_tile)
 
 space = False
 holding_space = False
@@ -96,6 +99,24 @@ while True:
 
     player.underwater = any(in_water)
 
+    was_here = False
+    # Door tiles
+    player.use = False
+    door_collisions = []
+    for door_tile in door_tiles:
+        collide = door_tile.get_rect().colliderect(player.get_rect())
+        door_collisions.append(collide)
+        if collide:
+            player.use = True
+            player.attached_text = 'Open (E)'
+            if e_key:
+                to_go = round(door_tile.tile - 1, 2)
+                if int(door_tile.tile) == 6:
+                    to_go = round(door_tile.tile + 1, 2)
+                if not was_here:
+                    was_here = True
+                    camera.go_to(to_go)
+
     # Calculating movement with input
     player.calculate_move()
 
@@ -113,7 +134,7 @@ while True:
     player.on_rwall = any(touches_rwall)
     player.on_lwall = any(touches_lwall)
 
-    # Relative y velocity for wall jumps
+    # Player movement
     player.calculate_walljump(0)
     player.move()
 
@@ -123,25 +144,19 @@ while True:
     camera.move(player)
     camera.note.move()
 
-    if camera.y < -64*29:
-        camera.set_pos((64 * 25, -64 * 5 + 16))
-        player.center()
-
     if player.moving_down and player.on_surface:
         camera.set_black_bars(True)
     else:
         camera.set_black_bars(False)
 
     # Checking for button presses
-    player.attached_text = ''
     for button in buttons:
         collide_button = button.collide_player(player)
         if collide_button and not button.pressed:
             player.attached_text = 'Use (E)'
+            player.use = True
             if e_key:
                 button.was_pressed()
-
-    player.use = any(button_collisions)
 
     # Syncing tiles with buttons
     for tile in tiles:
@@ -172,6 +187,10 @@ while True:
 
     # Drawing
     win.fill((64, 64, 64))
+
+    for door_tile in door_tiles:
+        door_tile.draw(win)
+
     player.draw(win)
     player.reset_variables()
 
@@ -181,7 +200,8 @@ while True:
     for button in buttons:
         button.draw(win)
 
-    player.draw_text(win)
+    if player.use:
+        player.draw_text(win)
 
     for water_tile in water_tiles:
         water_tile.draw(win)

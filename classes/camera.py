@@ -1,6 +1,6 @@
 import pygame
 from config import WINDOW_WIDTH, WINDOW_HEIGHT, FONT
-from math import sqrt
+from classes.player import Player
 
 
 class Camera:
@@ -32,6 +32,25 @@ class Camera:
 
         self.player.center()
 
+    def go_to(self, to_tile):
+        to_move = None
+        for item in self.objects:
+            if not hasattr(item, 'tile'):
+                continue
+
+            if item.tile == to_tile:
+                to_move = item
+                break
+
+        if to_move is None:
+            raise IndexError('Tile not found in camera objects.')
+
+        self.player.x = to_move.x
+        self.player.y = to_move.y
+        self.move_delta((self.player.x - WINDOW_WIDTH/2, WINDOW_HEIGHT/2 - self.player.y))
+        self.player.y_vel = 0
+        self.player.x_vel = 0
+
     def move_delta(self, delta):
         for item in self.objects:
             item.x -= delta[0]
@@ -39,6 +58,8 @@ class Camera:
 
         self.x += delta[0]
         self.y += delta[1]
+
+        return delta[0], delta[1]
 
     def set_black_bars(self, black_bars):
         if black_bars:

@@ -11,8 +11,6 @@ class Button(Tile):
         self.pressed = False
 
         if tile == 3.01:
-            self.looking_right = False
-        if tile == 3.02:
             self.looking_right = True
 
     def collide_player(self, player):
