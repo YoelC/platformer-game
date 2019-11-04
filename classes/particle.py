@@ -1,5 +1,4 @@
 import pygame
-from random import randint
 
 
 class Particle:
@@ -8,7 +7,7 @@ class Particle:
         self.height = self.width
 
         self.x_vel, self.y_vel = vel
-        self.surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        self.surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA).convert_alpha()
         self.color = color
         self.surface.fill(self.color)
 

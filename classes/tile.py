@@ -4,7 +4,7 @@ import pygame
 class Tile:
     width, height = 64, 64
 
-    def __init__(self, pos, tile, collision=True):
+    def __init__(self, pos, tile, collision=True, height=64):
         self.x, self.y = pos[0] * self.width, pos[1] * self.height
         self.x_vel, self.y_vel = 0, 0
         self.tile = tile
@@ -12,6 +12,7 @@ class Tile:
         self.walljump = False
         self.collision = collision
         self.activated = True
+        self.height = height
 
         self.surface = pygame.Surface((self.width, self.height))
         self.surface.fill((255, 0, 0))
@@ -19,6 +20,9 @@ class Tile:
         if tile == 2:
             self.surface.fill((0, 0, 255))
             self.walljump = True
+
+        if tile == 1.5:
+            self.walljump = False
 
     def get_rect(self):
         return pygame.Rect((self.x, self.y, self.width, self.height))
@@ -54,7 +58,7 @@ class Tile:
                         on_surface = True
 
                     else:
-                        player.y = self.y + self.width
+                        player.y = self.y + self.height
                         player.y_vel = self.y_vel
 
             # Checking for rwall, lwall collision

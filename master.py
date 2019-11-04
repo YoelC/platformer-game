@@ -1,5 +1,10 @@
 import pygame.freetype
-import sys
+from config import map, WINDOW_WIDTH, WINDOW_HEIGHT
+pygame.init()
+pygame.freetype.init()
+win = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+clock = pygame.time.Clock()
+
 from classes.player import Player
 from classes.tile import Tile
 from classes.water import WaterTile
@@ -8,26 +13,26 @@ from classes.button import Button
 from classes.door import Door
 from classes.camera import Camera
 from classes.particle import Particle
-from config import map, WINDOW_WIDTH, WINDOW_HEIGHT
+from classes.background import Background
 from random import randint, uniform
+import sys
 
 FPS = 30
-
-pygame.init()
-pygame.freetype.init()
-win = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-clock = pygame.time.Clock()
 
 player = Player((WINDOW_WIDTH/2, WINDOW_HEIGHT/2))
 tiles = []
 buttons = []
 water_tiles = []
 note_tiles = []
+background = Background()
 door_tiles = []
+platform_tiles = []
 for y, row in enumerate(map):
     for x, tile in enumerate(row):
         if tile == 1 or tile == 2 or int(tile) == 4:
             tiles.append(Tile((x, y), tile))
+        if round(tile, 2) == 1.50:
+            platform_tiles.append(Tile((x, y), tile, height=16))
         if int(tile) == 3:
             buttons.append(Button((x, y), tile))
         if int(tile) == 5:
@@ -48,6 +53,9 @@ for note_tile in note_tiles:
     camera.add_object(note_tile)
 for door_tile in door_tiles:
     camera.add_object(door_tile)
+for platform_tile in platform_tiles:
+    camera.add_object(platform_tile)
+camera.add_object(background)
 
 space = False
 holding_space = False
@@ -130,8 +138,14 @@ while True:
     # Calculating movement with input
     player.calculate_move()
 
-    # Calculating collision
+    # Calculating platform collision
     crashes_floor = []
+    for platform_tile in platform_tiles:
+        if player.y_vel > 0 and not player.moving_down and round(player.y + player.height, 2) <= round(platform_tile.y, 2):
+            result = platform_tile.collide_player(player)
+            crashes_floor.append(result[0])
+
+    # Calculating collision
     touches_lwall = []
     touches_rwall = []
     for tile in tiles:
@@ -231,13 +245,19 @@ while True:
             particles.pop(i)
 
     # Drawing
-    win.fill((64, 64, 64))
+    win.fill((0, 0, 0))
+
+    # Background drawing
+    background.draw(win)
 
     for door_tile in door_tiles:
         door_tile.draw(win)
 
     for particle in particles:
         particle.draw(win)
+
+    for platform_tile in platform_tiles:
+        platform_tile.draw(win)
 
     player.draw(win)
     player.reset_variables()

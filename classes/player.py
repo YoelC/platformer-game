@@ -15,18 +15,18 @@ class Player:
     jump_vel = 17
 
     scale = (100, 74)
-    air_imgs = [pygame.image.load('images/player/air_cycle/adventurer-fall-00.png'),
-                pygame.image.load('images/player/air_cycle/adventurer-fall-01.png')]
+    air_imgs = [pygame.image.load('images/player/air_cycle/adventurer-fall-00.png').convert_alpha(),
+                pygame.image.load('images/player/air_cycle/adventurer-fall-01.png').convert_alpha()]
     for i, img in enumerate(air_imgs):
         air_imgs[i] = pygame.transform.scale(img, (scale[0] + 13, scale[1] + 5))
 
-    idle_imgs = [pygame.image.load('images/player/idle_cycle/adventurer-idle-00.png'),
-                 pygame.image.load('images/player/idle_cycle/adventurer-idle-01.png')]
+    idle_imgs = [pygame.image.load('images/player/idle_cycle/adventurer-idle-00.png').convert_alpha(),
+                 pygame.image.load('images/player/idle_cycle/adventurer-idle-01.png').convert_alpha()]
     for i, img in enumerate(idle_imgs):
         idle_imgs[i] = pygame.transform.scale(img, scale)
 
-    jump_imgs = [pygame.image.load('images/player/jump_cycle/adventurer-jump-00.png'),
-                 pygame.image.load('images/player/jump_cycle/adventurer-jump-01.png')]
+    jump_imgs = [pygame.image.load('images/player/jump_cycle/adventurer-jump-00.png').convert_alpha(),
+                 pygame.image.load('images/player/jump_cycle/adventurer-jump-01.png').convert_alpha()]
     for i, img in enumerate(jump_imgs):
         jump_imgs[i] = pygame.transform.scale(img, (scale[0] + 13, scale[1] + 5))
 
@@ -39,31 +39,31 @@ class Player:
     for i, img in enumerate(walk_imgs):
         walk_imgs[i] = pygame.transform.scale(img, (scale[0] + 13, scale[1] + 5))
 
-    wall_slide_imgs = [pygame.image.load('images/player/wall_slide_cycle/adventurer-wall-slide-00.png'),
-                       pygame.image.load('images/player/wall_slide_cycle/adventurer-wall-slide-01.png')]
+    wall_slide_imgs = [pygame.image.load('images/player/wall_slide_cycle/adventurer-wall-slide-00.png').convert_alpha(),
+                       pygame.image.load('images/player/wall_slide_cycle/adventurer-wall-slide-01.png').convert_alpha()]
     for i, img in enumerate(wall_slide_imgs):
         wall_slide_imgs[i] = pygame.transform.scale(img, scale)
 
-    crouch_imgs = [pygame.image.load('images/player/crouch_cycle/adventurer-crouch-00.png'),
-                   pygame.image.load('images/player/crouch_cycle/adventurer-crouch-01.png'),
-                   pygame.image.load('images/player/crouch_cycle/adventurer-crouch-02.png'),
-                   pygame.image.load('images/player/crouch_cycle/adventurer-crouch-03.png')]
+    crouch_imgs = [pygame.image.load('images/player/crouch_cycle/adventurer-crouch-00.png').convert_alpha(),
+                   pygame.image.load('images/player/crouch_cycle/adventurer-crouch-01.png').convert_alpha(),
+                   pygame.image.load('images/player/crouch_cycle/adventurer-crouch-02.png').convert_alpha(),
+                   pygame.image.load('images/player/crouch_cycle/adventurer-crouch-03.png').convert_alpha()]
     for i, img in enumerate(crouch_imgs):
         crouch_imgs[i] = pygame.transform.scale(img, scale)
 
-    swim_imgs = [pygame.image.load('images/player/water_cycles/swim_cycle/adventurer-swim-00.png'),
-                 pygame.image.load('images/player/water_cycles/swim_cycle/adventurer-swim-01.png'),
-                 pygame.image.load('images/player/water_cycles/swim_cycle/adventurer-swim-02.png'),
-                 pygame.image.load('images/player/water_cycles/swim_cycle/adventurer-swim-03.png')]
+    swim_imgs = [pygame.image.load('images/player/water_cycles/swim_cycle/adventurer-swim-00.png').convert_alpha(),
+                 pygame.image.load('images/player/water_cycles/swim_cycle/adventurer-swim-01.png').convert_alpha(),
+                 pygame.image.load('images/player/water_cycles/swim_cycle/adventurer-swim-02.png').convert_alpha(),
+                 pygame.image.load('images/player/water_cycles/swim_cycle/adventurer-swim-03.png').convert_alpha()]
     for i, img in enumerate(swim_imgs):
         swim_imgs[i] = pygame.transform.scale(img, (scale[0] + 7, scale[1] + 2))
 
-    tread_imgs = [pygame.image.load('images/player/water_cycles/tread_cycle/adventurer-water-tread-00.png'),
-                  pygame.image.load('images/player/water_cycles/tread_cycle/adventurer-water-tread-01.png'),
-                  pygame.image.load('images/player/water_cycles/tread_cycle/adventurer-water-tread-02.png'),
-                  pygame.image.load('images/player/water_cycles/tread_cycle/adventurer-water-tread-03.png'),
-                  pygame.image.load('images/player/water_cycles/tread_cycle/adventurer-water-tread-04.png'),
-                  pygame.image.load('images/player/water_cycles/tread_cycle/adventurer-water-tread-05.png')]
+    tread_imgs = [pygame.image.load('images/player/water_cycles/tread_cycle/adventurer-water-tread-00.png').convert_alpha(),
+                  pygame.image.load('images/player/water_cycles/tread_cycle/adventurer-water-tread-01.png').convert_alpha(),
+                  pygame.image.load('images/player/water_cycles/tread_cycle/adventurer-water-tread-02.png').convert_alpha(),
+                  pygame.image.load('images/player/water_cycles/tread_cycle/adventurer-water-tread-03.png').convert_alpha(),
+                  pygame.image.load('images/player/water_cycles/tread_cycle/adventurer-water-tread-04.png').convert_alpha(),
+                  pygame.image.load('images/player/water_cycles/tread_cycle/adventurer-water-tread-05.png').convert_alpha()]
     for i, img in enumerate(tread_imgs):
         tread_imgs[i] = pygame.transform.scale(img, scale)
 

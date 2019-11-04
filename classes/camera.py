@@ -110,6 +110,9 @@ class Camera:
         elif player_y > self.y_zone - 50 and self.y_vel > 0:
             self.y_vel *= 0.8
 
+        self.x_vel = round(self.x_vel, 2)
+        self.y_vel = round(self.y_vel, 2)
+
         self.cap_vel((15, None))
         self.move_delta((self.x_vel, self.y_vel))
 
