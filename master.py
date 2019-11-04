@@ -49,6 +49,9 @@ for door_tile in door_tiles:
 
 space = False
 holding_space = False
+black_fadeout = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
+black_fadeout.fill((0, 0, 0, 0))
+alpha = 0
 
 e_key = False
 holding_e_key = False
@@ -116,6 +119,7 @@ while True:
                 if not was_here:
                     was_here = True
                     camera.go_to(to_go)
+                    alpha = 255
 
     # Calculating movement with input
     player.calculate_move()
@@ -213,5 +217,9 @@ while True:
     camera.note.draw(win)
     # Deadzone drawing
     # camera.draw(win)
+
+    alpha /= 2
+    black_fadeout.fill((0, 0, 0, alpha))
+    win.blit(black_fadeout, (0, 0))
 
     pygame.display.flip()
