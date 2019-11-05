@@ -32,7 +32,7 @@ for y, row in enumerate(map):
         if tile == 1 or tile == 2 or int(tile) == 4:
             tiles.append(Tile((x, y), tile))
         if round(tile, 2) == 1.50:
-            platform_tiles.append(Tile((x, y), tile, height=16))
+            platform_tiles.append(Tile((x, y), tile, height=4))
         if int(tile) == 3:
             buttons.append(Button((x, y), tile))
         if int(tile) == 5:
@@ -125,7 +125,7 @@ while True:
         door_collisions.append(collide)
         if collide:
             player.use = True
-            player.attached_text = 'Open (E)'
+            player.attached_text = 'Enter (E)'
             if e_key:
                 to_go = round(door_tile.tile - 1, 2)
                 if int(door_tile.tile) == 6:
@@ -245,25 +245,31 @@ while True:
             particles.pop(i)
 
     # Drawing
-    win.fill((0, 0, 0))
+    win.fill((6, 9, 14))
 
     # Background drawing
     background.draw(win)
 
+    '''
     for door_tile in door_tiles:
         door_tile.draw(win)
+    '''
 
     for particle in particles:
         particle.draw(win)
 
+    '''
     for platform_tile in platform_tiles:
         platform_tile.draw(win)
+    '''
 
     player.draw(win)
     player.reset_variables()
 
+    '''
     for tile in tiles:
         tile.draw(win)
+    '''
 
     for button in buttons:
         button.draw(win)
@@ -274,8 +280,10 @@ while True:
     for water_tile in water_tiles:
         water_tile.draw(win)
 
+    '''
     for note_tile in note_tiles:
         note_tile.draw(win)
+    '''
 
     camera.draw_black_bar(win)
     camera.note.draw(win)

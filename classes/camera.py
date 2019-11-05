@@ -112,6 +112,11 @@ class Camera:
 
         self.x_vel = round(self.x_vel, 2)
         self.y_vel = round(self.y_vel, 2)
+        if abs(self.x_vel) < 0.1:
+            self.x_vel = 0
+
+        if abs(self.y_vel) < 0.1:
+            self.y_vel = 0
 
         self.cap_vel((15, None))
         self.move_delta((self.x_vel, self.y_vel))

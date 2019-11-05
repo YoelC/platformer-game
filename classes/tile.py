@@ -86,4 +86,5 @@ class Tile:
 
     def draw(self, surface):
         if self.activated:
-            surface.blit(self.surface, (self.x, self.y))
+            # surface.blit(self.surface, (self.x, self.y))
+            pygame.draw.rect(surface, (255, 0, 0), self.get_rect(), 2)
