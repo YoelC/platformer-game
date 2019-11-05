@@ -23,6 +23,7 @@ player = Player((WINDOW_WIDTH/2, WINDOW_HEIGHT/2))
 tiles = []
 buttons = []
 water_tiles = []
+reset_tiles = []
 note_tiles = []
 background = Background()
 door_tiles = []
@@ -31,6 +32,8 @@ for y, row in enumerate(map):
     for x, tile in enumerate(row):
         if tile == 1 or tile == 2 or int(tile) == 4:
             tiles.append(Tile((x, y), tile))
+        elif int(tile) == 2:
+            reset_tiles.append(Tile((x, y), tile))
         if round(tile, 2) == 1.50:
             platform_tiles.append(Tile((x, y), tile, height=4))
         if int(tile) == 3:
@@ -55,12 +58,14 @@ for door_tile in door_tiles:
     camera.add_object(door_tile)
 for platform_tile in platform_tiles:
     camera.add_object(platform_tile)
+for reset_tile in reset_tiles:
+    camera.add_object(reset_tile)
 camera.add_object(background)
 
 space = False
 holding_space = False
-black_fadeout = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
-black_fadeout.fill((0, 0, 0, 0))
+black_fadeout = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
+black_fadeout.fill((0, 0, 0))
 alpha = 0
 
 particles = []
@@ -115,6 +120,8 @@ while True:
         in_water.append(player.get_rect().colliderect(tile.get_rect()))
 
     player.underwater = any(in_water)
+    if keys[pygame.K_q]:
+        player.underwater = True
 
     # Door tiles
     was_here = False
@@ -134,6 +141,13 @@ while True:
                     was_here = True
                     camera.go_to(to_go)
                     alpha = 255
+
+    # Reset tiles
+    for reset_tile in reset_tiles:
+        collide = reset_tile.get_rect().colliderect(player.get_rect())
+        if collide and reset_tile.tile == 2.01:
+            camera.go_to([door_tile.tile for door_tile in door_tiles if door_tile.tile == 7.01][0])
+            alpha = 255
 
     # Calculating movement with input
     player.calculate_move()
@@ -187,7 +201,7 @@ while True:
         particles.append(Particle(
             pos=(player.x + player.width / 2 + randint(-5, 5), player.y + player.height/2, randint(4, 8)),
             vel=(0, player.y_vel),
-            color=(128, 128, 128),
+            color=(255, 0, 0),
             lifetime=15,
             gravity=True))
         camera.add_object(particles[-1])
@@ -197,7 +211,7 @@ while True:
             particles.append(Particle(
                 pos=(player.x + player.width / 2 + randint(-5, 5), player.y + player.height/2, randint(4, 8)),
                 vel=(player.x_vel * uniform(0.5, 0.9), randint(-10, -5)),
-                color=(128, 128, 128),
+                color=(255, 0, 0),
                 lifetime=15,
                 gravity=True))
             camera.add_object(particles[-1])
@@ -214,9 +228,10 @@ while True:
     # Syncing tiles with buttons
     for tile in tiles:
         tile.move()
-        for button in buttons:
-            if button.pressed and round(button.tile - 3, 2) == round(tile.tile - 4, 2) and tile.activated:
-                tile.activate()
+
+        check = [button.pressed for button in buttons if round(button.tile - 3, 2) == round(tile.tile - 4, 2) and tile.activated]
+        if all(check) and check:
+            tile.disable()
 
     # Note tile interaction
     readings = []
@@ -250,26 +265,23 @@ while True:
     # Background drawing
     background.draw(win)
 
-    '''
     for door_tile in door_tiles:
         door_tile.draw(win)
-    '''
 
     for particle in particles:
         particle.draw(win)
 
-    '''
     for platform_tile in platform_tiles:
         platform_tile.draw(win)
-    '''
 
     player.draw(win)
     player.reset_variables()
 
-    '''
     for tile in tiles:
         tile.draw(win)
-    '''
+
+    for reset_tile in reset_tiles:
+        reset_tile.draw(win)
 
     for button in buttons:
         button.draw(win)
@@ -280,10 +292,8 @@ while True:
     for water_tile in water_tiles:
         water_tile.draw(win)
 
-    '''
     for note_tile in note_tiles:
         note_tile.draw(win)
-    '''
 
     camera.draw_black_bar(win)
     camera.note.draw(win)
@@ -291,9 +301,14 @@ while True:
     # Deadzone drawing
     # camera.draw(win)
 
-    alpha /= 1.1
-    black_fadeout.fill((0, 0, 0, alpha))
-    win.blit(black_fadeout, (0, 0))
+    if alpha < 5:
+        alpha = 0
+    else:
+        alpha -= 5
+    black_fadeout.set_alpha(alpha)
+
+    if alpha > 5:
+        win.blit(black_fadeout, (0, 0))
 
     tick += 1
 

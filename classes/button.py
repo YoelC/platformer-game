@@ -3,9 +3,9 @@ from classes.tile import Tile
 
 
 class Button(Tile):
-    closed_img = pygame.image.load('images/environment/button/closed.png')
+    closed_img = pygame.image.load('images/button/closed.png')
     closed_img = pygame.transform.scale(closed_img, (closed_img.get_rect().width*2, closed_img.get_rect().height*2)).convert_alpha()
-    open_img = pygame.image.load('images/environment/button/opened.png')
+    open_img = pygame.image.load('images/button/opened.png')
     open_img = pygame.transform.scale(open_img, (open_img.get_rect().width*2, open_img.get_rect().height*2)).convert_alpha()
 
     def __init__(self, pos, tile):

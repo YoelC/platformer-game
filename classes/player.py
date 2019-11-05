@@ -1,5 +1,5 @@
 import pygame
-from config import FONT, WINDOW_WIDTH, WINDOW_HEIGHT
+from config import FONT, WINDOW_WIDTH, WINDOW_HEIGHT, GRAVITY
 
 
 def rotate_center(surface, angle, pos):
@@ -12,7 +12,7 @@ class Player:
     width, height = 30, 64
     vel = 1
     max_vel = 15
-    jump_vel = 17
+    jump_vel = 25
 
     scale = (100, 74)
     air_imgs = [pygame.image.load('images/player/air_cycle/adventurer-fall-00.png'),
@@ -93,11 +93,8 @@ class Player:
             if abs(self.x_vel) > self.max_vel:
                 self.x_vel = self.max_vel if self.x_vel > 0 else -self.max_vel
 
-            if self.y_vel > 40 and self.moving_down:
-                self.y_vel = 40
-
-            if self.y_vel > 20 and not self.moving_down:
-                self.y_vel = 20
+            if self.y_vel > 30:
+                self.y_vel = 30
         else:
             if abs(self.x_vel) > 15:
                 self.x_vel = 15 if self.x_vel > 0 else -15
@@ -107,7 +104,7 @@ class Player:
 
     def calculate_move(self):
         if not self.underwater:
-            self.y_vel += 1
+            self.y_vel += GRAVITY
 
             if self.moving_right and self.moving_left or (self.moving_down and self.on_surface):
                 self.moving_right, self.moving_left = False, False
@@ -166,14 +163,15 @@ class Player:
                 self.slide_ability = False
 
             if self.slide_ability:
+                jump_vel = 21.1
                 if self.jumping and self.on_lwall and not self.on_surface:
-                    self.y_vel = -15 * 0.707 + relative_y_vel
-                    self.x_vel -= 15 * 0.707
+                    self.y_vel = -jump_vel * 0.866 + relative_y_vel
+                    self.x_vel -= jump_vel * 0.5
                     self.jump_count = 1
 
                 if self.jumping and self.on_rwall and not self.on_surface:
-                    self.y_vel = -15 * 0.707 + relative_y_vel
-                    self.x_vel += 15 * 0.707
+                    self.y_vel = -jump_vel * 0.866 + relative_y_vel
+                    self.x_vel += jump_vel * 0.5
                     self.jump_count = 1
 
                 if self.on_rwall or self.on_lwall and not self.on_surface:

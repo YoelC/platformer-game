@@ -1,4 +1,5 @@
 import pygame
+from config import GRAVITY
 
 
 class Particle:
@@ -20,7 +21,7 @@ class Particle:
 
     def move(self):
         if self.gravity:
-            self.y_vel += 1
+            self.y_vel += GRAVITY
 
         self.x += self.x_vel
         self.y += self.y_vel

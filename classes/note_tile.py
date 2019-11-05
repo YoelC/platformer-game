@@ -17,7 +17,9 @@ class NoteTile(Tile):
         if tile == 5.02:
             self.text = "I've seen some other people, none of them knowing how they got here. However, we all woke up with the same thought: Keep. Going. Down."
         if tile == 5.03:
-            self.text = "Sorry! Out of order (Thanks for playing the demo!)"
+            self.text = "This blood is sticky, to the point where you can stick to it. Remember this.    -J"
+        if tile == 5.04:
+            self.text = "What's up with this water?"
 
     def get_rect(self):
         return pygame.Rect(self.x, self.y, 64, 64)

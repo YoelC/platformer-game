@@ -14,12 +14,13 @@ class Tile:
         self.activated = True
         self.height = height
 
-        self.surface = pygame.Surface((self.width, self.height))
-        self.surface.fill((255, 0, 0))
+        self.color = (255, 0, 0)
 
         if tile == 2:
-            self.surface.fill((0, 0, 255))
+            self.color = (0, 0, 255)
             self.walljump = True
+        elif int(tile) == 2:
+            self.color = (0, 255, 255)
 
         if tile == 1.5:
             self.walljump = False
@@ -77,7 +78,7 @@ class Tile:
                 return on_surface, False, False, inside_any
         return False, False, False, False
 
-    def activate(self):
+    def disable(self):
         self.activated = False
 
     def move(self):
@@ -86,5 +87,4 @@ class Tile:
 
     def draw(self, surface):
         if self.activated:
-            # surface.blit(self.surface, (self.x, self.y))
-            pygame.draw.rect(surface, (255, 0, 0), self.get_rect(), 2)
+            pygame.draw.rect(surface, self.color, self.get_rect(), 2)
