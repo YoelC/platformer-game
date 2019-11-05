@@ -15,6 +15,7 @@ The game has a few features, such as:
     - Activating buttons
     - Swimming
     - Platforms
+    - Doors
 - Readable notes
 - Textures
 - A particle system
